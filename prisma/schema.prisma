@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   // "employer" | "candidate"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  exams     Exam[]    // Exams created by employer
+  attempts  Attempt[] // Exam attempts by candidate
+}
+
+model Exam {
+  id              String   @id @default(cuid())
+  title           String
+  totalCandidates Int
+  totalSlots      Int
+  questionSets    Int
+  questionType    String
+  startTime       DateTime
+  endTime         DateTime
+  duration        Int      // Duration in minutes
+  negativeMarking Float?   // Optional field based on Candidate Dashboard need
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  employerId      String
+  employer        User     @relation(fields: [employerId], references: [id])
+  
+  questions       Question[]
+  attempts        Attempt[]
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  title     String
+  type      String   // "checkbox" | "radio" | "text"
+  options   String   @default("[]") // JSON string of options 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  examId    String
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+}
+
+model Attempt {
+  id          String   @id @default(cuid())
+  candidateId String
+  candidate   User     @relation(fields: [candidateId], references: [id])
+  examId      String
+  exam        Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  
+  status      String   @default("in_progress") // "in_progress" | "completed" | "locked_out"
+  answers     String?  @default("{}") // JSON string of answers
+  score       Int?
+  
+  startTime   DateTime @default(now())
+  endTime     DateTime?
+}
