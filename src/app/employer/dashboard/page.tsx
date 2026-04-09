@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Loader2, Plus, Users, LayoutList, Calendar, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Loader2, Plus, Search, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
+import Image from 'next/image';
 
 interface Exam {
   id: string;
@@ -43,13 +45,16 @@ export default function EmployerDashboard() {
 
   return (
     <DashboardLayout role="employer">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-4 border-b border-slate-100">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Online Tests List</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Manage and review your created assessments.</p>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-2">
+        <h1 className="text-[24px] md:text-[28px] font-bold text-[#4A4B68] whitespace-nowrap mr-6">Online Tests</h1>
+        <div className="flex-1 w-full max-w-xl relative mt-4 md:mt-0">
+          <Input placeholder="Search by exam title" className="w-full h-11 rounded-[8px] border-[#CBD5E1] bg-white text-[14px] px-4" />
+          <div className="absolute right-1.5 top-1.5 w-8 h-8 rounded shrink-0 bg-primary/10 flex items-center justify-center pointer-events-none">
+            <Search className="w-4 h-4 text-primary" />
+          </div>
         </div>
-        <Button onClick={() => router.push('/employer/create-test')} className="mt-4 md:mt-0 shadow-sm gap-2 h-11">
-          <Plus className="h-4 w-4" /> Create Online Test
+        <Button onClick={() => router.push('/employer/create-test')} className="mt-4 md:mt-0 h-11 px-6 rounded-[8px] bg-primary hover:bg-primary/90 text-white font-medium md:ml-6 shrink-0">
+          Create Online Test
         </Button>
       </div>
 
@@ -58,50 +63,67 @@ export default function EmployerDashboard() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : exams.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
-          <h3 className="text-lg font-medium text-slate-900 mb-2">No tests created yet</h3>
-          <p className="text-slate-500 mb-6 max-w-sm mx-auto">Get started by creating your first online assessment test.</p>
-          <Button variant="outline" onClick={() => router.push('/employer/create-test')}>
-            Create Test
-          </Button>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[12px] border border-[#E2E8F0] shadow-sm mt-4">
+          <Image src="/empty.png" width={116} height={116} alt="Empty Box" className="mb-6 object-contain" />
+          <h3 className="text-[18px] md:text-[20px] font-bold text-[#1B1C31] mb-2">No Online Test Available</h3>
+          <p className="text-[14px] text-[#475569] max-w-sm text-center px-4 leading-relaxed">
+             Currently, there are no online tests available. Please check back later for updates.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {exams.map((exam) => (
-            <Card key={exam.id} className="shadow-sm hover:shadow-md transition-shadow group overflow-hidden border-slate-200 relative bg-white">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary/80" />
-              <CardHeader className="pb-3">
-                <CardTitle className="text-xl line-clamp-1">{exam.title}</CardTitle>
-                <div className="text-xs text-slate-400">Created: {new Date(exam.createdAt).toLocaleDateString()}</div>
-              </CardHeader>
-              <CardContent className="pb-4 border-b border-slate-50/50">
-                <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-sm">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Users className="w-4 h-4 text-primary/70" />
-                    <span>{exam.totalCandidates} Candidates</span>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {exams.map((exam) => (
+              <Card key={exam.id} onClick={() => router.push(`/employer/manage-test/${exam.id}`)} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-6 px-6 pb-6 w-full relative cursor-pointer hover:shadow-md hover:border-primary/30 transition-all duration-200">
+                <div className="text-[17px] font-semibold text-[#1B1C31] mb-3 line-clamp-1">
+                  {exam.title || 'Psychometric Test for Management Trainee Officer'}
+                </div>
+                
+                <div className="flex flex-wrap items-center justify-between text-[13px] text-[#475569] mb-5 gap-y-3">
+                  <div className="flex items-center gap-2">
+                    <Image src="/candidate.png" alt="Candidate" width={16} height={16} />
+                    <span>Candidates: {exam.totalCandidates ? exam.totalCandidates.toLocaleString() : 'Not Set'}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <LayoutList className="w-4 h-4 text-primary/70" />
-                    <span>{exam.questionSets} Q. Sets</span>
+                  <div className="flex items-center gap-2">
+                    <Image src="/set.png" alt="Set" width={16} height={16} />
+                    <span>Question Set: {exam.questionSets ? exam.questionSets : 'Not Set'}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Calendar className="w-4 h-4 text-primary/70" />
-                    <span>{exam.totalSlots} Slots</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Clock className="w-4 h-4 text-primary/70" />
-                    <span>{exam.duration} Min</span>
+                  <div className="flex items-center gap-2">
+                    <Image src="/slot.png" alt="Slot" width={16} height={16} />
+                    <span>Exam Slots: {exam.totalSlots ? exam.totalSlots : 'Not Set'}</span>
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter className="pt-4 bg-slate-50/50">
-                <Button variant="ghost" className="w-full text-primary hover:text-primary hover:bg-primary/5 font-medium transition-colors">
-                  View Candidates
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+
+                <div className="mt-auto">
+                  <Button variant="outline" onClick={(e) => { e.stopPropagation(); }} className="h-9 px-6 rounded-[8px] border-primary text-primary hover:bg-primary/5 hover:text-primary font-medium text-[13px] relative z-10">
+                    View Candidates
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between mt-10 mb-6">
+            <div className="flex items-center gap-2">
+              <button disabled className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#94A3B8] disabled:opacity-50">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#4A4B68] text-sm font-medium">
+                1
+              </button>
+              <button disabled className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#94A3B8] disabled:opacity-50">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3 mt-4 md:mt-0 text-[13px] text-[#64748B]">
+              <span>Online Test Per Page</span>
+              <button className="flex items-center gap-2 px-3 py-1.5 rounded border border-[#E2E8F0] bg-white text-[#4A4B68] font-medium outline-none shrink-0">
+                8 <ChevronUp className="w-3 h-3 text-[#94A3B8]" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </DashboardLayout>
   );

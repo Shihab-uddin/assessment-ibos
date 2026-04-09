@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { Loader2, PlayCircle, Clock, FileQuestion, MinusCircle } from 'lucide-react';
+import { Loader2, Search, Clock, FileText, XCircle, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 
 interface Exam {
   id: string;
@@ -43,9 +45,16 @@ export default function CandidateDashboard() {
 
   return (
     <DashboardLayout role="candidate">
-      <div className="mb-8 pb-4 border-b border-slate-100">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Available Assessments</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Select an exam below to begin your assessment.</p>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-2">
+        <h1 className="text-[24px] md:text-[28px] font-bold text-[#4A4B68] whitespace-nowrap mr-6">Online Tests</h1>
+        <div className="flex-1 w-full max-w-xl relative mt-4 md:mt-0 flex justify-end">
+          <div className="relative w-full">
+            <Input placeholder="Search by exam title" className="w-full h-11 rounded-[8px] border-[#CBD5E1] bg-white text-[14px] px-4" />
+            <div className="absolute right-1.5 top-1.5 w-8 h-8 rounded shrink-0 bg-primary/10 flex items-center justify-center pointer-events-none">
+              <Search className="w-4 h-4 text-primary" />
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -53,46 +62,73 @@ export default function CandidateDashboard() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : exams.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-2xl bg-white">
-          <h3 className="text-lg font-medium text-slate-900 mb-2">No exams available</h3>
-          <p className="text-slate-500 mb-6 max-w-sm mx-auto">You currently have no pending assessments assigned to you.</p>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[12px] border border-[#E2E8F0] shadow-sm mt-4">
+          <Image src="/empty.png" width={116} height={116} alt="Empty Box" className="mb-6 object-contain" />
+          <h3 className="text-[18px] md:text-[20px] font-bold text-[#1B1C31] mb-2">No Online Test Available</h3>
+          <p className="text-[14px] text-[#475569] max-w-sm text-center px-4 leading-relaxed">
+             Currently, there are no online tests available. Please check back later for updates.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {exams.map((exam) => (
-            <Card key={exam.id} className="shadow-sm hover:shadow-md transition-shadow group overflow-hidden border-slate-200 relative bg-white flex flex-col">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary/80" />
-              <CardHeader className="pb-3">
-                <CardTitle className="text-xl line-clamp-1">{exam.title}</CardTitle>
-                <CardDescription>Assessment Challenge</CardDescription>
-              </CardHeader>
-              <CardContent className="pb-6 flex-1">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100/50">
-                    <Clock className="w-4 h-4 text-primary" />
-                    <span className="font-medium text-slate-900">{exam.duration} Min Duration</span>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {exams.map((exam) => (
+              <Card key={exam.id} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-6 px-6 pb-6 w-full relative flex flex-col justify-between">
+                <div>
+                  <div className="text-[17px] font-semibold text-[#1B1C31] mb-6 line-clamp-1">
+                    {exam.title || 'Psychometric Test for Management Trainee Officer'}
                   </div>
-                  <div className="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100/50">
-                    <FileQuestion className="w-4 h-4 text-primary" />
-                    <span className="font-medium text-slate-900">{exam._count.questions} Questions</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100/50">
-                    <MinusCircle className="w-4 h-4 text-primary" />
-                    <span className="font-medium text-slate-900">{exam.negativeMarking ? 'Yes' : 'No'} Negative Marking</span>
+                  
+                  <div className="flex flex-wrap items-center justify-between text-[13px] text-[#475569] mb-8 gap-y-3">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-[18px] h-[18px] text-[#94A3B8]" />
+                      <span>Duration: <span className="text-[#1B1C31] font-semibold">{exam.duration} min</span></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-[18px] h-[18px] text-[#94A3B8]" />
+                      <span>Question: <span className="text-[#1B1C31] font-semibold">{exam._count?.questions || 20}</span></span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <XCircle className="w-[18px] h-[18px] text-[#94A3B8]" />
+                      <span>Negative Marking: <span className="text-[#1B1C31] font-semibold">-0.25/wrong</span></span>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter className="pt-0">
-                <Button 
-                  className="w-full shadow-md gap-2 h-11"
-                  onClick={() => router.push(`/candidate/exam/${exam.id}`)}
-                >
-                  <PlayCircle className="w-5 h-5" /> Start Assessment
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+
+                <div className="mt-auto">
+                  <Button 
+                    variant="outline" 
+                    className="h-10 w-[140px] rounded-[8px] border-[#6633FF] text-[#6633FF] hover:bg-[#6633FF]/5 hover:text-[#6633FF] font-semibold text-[14px]"
+                    onClick={() => router.push(`/candidate/exam/${exam.id}`)}
+                  >
+                    Start
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-between mt-10 mb-6">
+            <div className="flex items-center gap-2">
+              <button disabled className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#94A3B8] disabled:opacity-50">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#4A4B68] text-sm font-medium">
+                1
+              </button>
+              <button disabled className="flex items-center justify-center w-8 h-8 rounded border border-[#E2E8F0] bg-white text-[#94A3B8] disabled:opacity-50">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-3 mt-4 md:mt-0 text-[13px] text-[#64748B]">
+              <span>Online Test Per Page</span>
+              <button className="flex items-center gap-2 px-3 py-1.5 rounded border border-[#E2E8F0] bg-white text-[#4A4B68] font-medium outline-none shrink-0">
+                8 <ChevronUp className="w-3 h-3 text-[#94A3B8]" />
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </DashboardLayout>
   );

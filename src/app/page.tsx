@@ -1,45 +1,57 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { AuthForm } from '@/components/AuthForm';
+
+export default function RootPage() {
+  const [mode, setMode] = useState<'login'|'register'>('login');
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-8 bg-slate-50/50">
-      <div className="max-w-2xl text-center space-y-8">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900">
-          Online Assessment Platform
-        </h1>
-        <p className="text-xl text-slate-600">
-          The ultimate platform for creating and taking robust online examinations.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
-          <div className="p-8 space-y-4 bg-white rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-2xl font-semibold">For Employers</h2>
-            <p className="text-slate-600">Create tests, manage candidates, and review results effortlessly.</p>
-            <div className="space-x-4 pt-4">
-              <Button asChild>
-                <Link href="/employer/login">Login</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/employer/register">Register</Link>
-              </Button>
-            </div>
-          </div>
-
-          <div className="p-8 space-y-4 bg-white rounded-2xl shadow-sm border border-slate-200">
-            <h2 className="text-2xl font-semibold">For Candidates</h2>
-            <p className="text-slate-600">Access your assessment dashboard and complete assigned tests securely.</p>
-            <div className="space-x-4 pt-4">
-              <Button asChild>
-                <Link href="/candidate/login">Login</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/candidate/register">Register</Link>
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans">
+      <header className="flex h-[72px] items-center px-6 md:px-10 border-b border-[#E2E8F0] bg-white shadow-sm sticky top-0 z-10 w-full">
+        <div className="flex-1 flex items-center">
+          <Image src="/Resource-Logo-1.png" alt="Logo" width={110} height={35} className="object-contain" priority />
         </div>
-      </div>
-    </main>
+        <div className="flex-1 flex justify-center items-center">
+          <span className="text-[16px] font-bold text-[#4A4B68]">Akij Resource</span>
+        </div>
+        <div className="flex-1 flex justify-end items-center gap-4">
+           {/* If they are on Login, show Register toggle button, and vice-versa */}
+           {mode === 'login' ? (
+              <button onClick={() => setMode('register')} className="text-[14px] font-bold text-[#6633FF] hover:underline">
+                Register an Account
+              </button>
+           ) : (
+              <button onClick={() => setMode('login')} className="text-[14px] font-bold text-[#6633FF] hover:underline">
+                Sign In
+              </button>
+           )}
+        </div>
+      </header>
+
+      <main className="flex-1 w-full mx-auto p-4 md:p-8 flex flex-col items-center justify-center">
+        {mode === 'login' && <h1 className="text-[22px] font-bold text-[#4A4B68] mb-8">Sign In</h1>}
+        <AuthForm type={mode} onModeToggle={() => setMode(mode === 'login' ? 'register' : 'login')} />
+      </main>
+
+      <footer className="mt-auto bg-[#1B1C31] text-white py-4 px-6 flex flex-col md:flex-row items-center justify-between text-[13px]">
+         <div className="flex items-center gap-2 mb-4 md:mb-0">
+            <span className="text-[#94A3B8]">Powered by</span>
+            <Image src="/Resource-Logo-1.png" width={90} height={24} alt="Powered by Logo" className="brightness-0 invert object-contain" />
+         </div>
+         <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+                <span className="text-[#94A3B8]">Helpline</span>
+                <div className="flex items-center gap-1.5 font-medium">
+                    <span>📞</span> +88 011020202505
+                </div>
+            </div>
+            <div className="flex items-center gap-1.5 font-medium">
+                <span>✉️</span> support@akij.work
+            </div>
+         </div>
+      </footer>
+    </div>
   );
 }

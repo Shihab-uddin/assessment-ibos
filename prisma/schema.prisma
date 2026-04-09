@@ -44,9 +44,11 @@ model Exam {
 model Question {
   id        String   @id @default(cuid())
   title     String
-  type      String   // "checkbox" | "radio" | "text"
-  options   String   @default("[]") // JSON string of options 
-  createdAt DateTime @default(now())
+  type           String   // "checkbox" | "radio" | "text"
+  options        String   @default("[]") // JSON string of options 
+  correctAnswers String?  @default("[]") // JSON array of correct option indexes
+  score          Float?   @default(1)
+  createdAt      DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   examId    String

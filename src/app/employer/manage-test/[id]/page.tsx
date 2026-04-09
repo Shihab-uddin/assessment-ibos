@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Check, CheckCircle2, Loader2, Undo, Redo, List, Trash2, Plus, ChevronDown } from 'lucide-react';
+import { Check, CheckCircle2, Loader2, Undo, Redo, List, Trash2, Plus, ChevronDown, PencilSquare, Edit2 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
+import { format } from 'date-fns';
 
 interface Question {
   id: string; // temp client id
@@ -53,10 +54,13 @@ const RichTextEditorMock = ({ value, onChange, placeholder }: any) => (
 );
 
 
-export default function CreateTestPage() {
+export default function ManageTestPage() {
   const router = useRouter();
+  const params = useParams();
+  const examId = params.id as string;
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [initialFetchLoading, setInitialFetchLoading] = useState(true);
 
   // Step 1 Data
   const [basicInfo, setBasicInfo] = useState({
@@ -70,25 +74,74 @@ export default function CreateTestPage() {
     duration: '',
   });
 
+  // Flow State
+  const [isEditingBasicInfo, setIsEditingBasicInfo] = useState(false);
+
   // Step 2 Data
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const { token } = useAuthStore();
 
-  // Modal Form State
+  // Modal Form State (Question)
   const [qTitle, setQTitle] = useState('');
   const [qType, setQType] = useState('checkbox');
-  const [qOptions, setQOptions] = useState(['', '', '']); // Start with 3 typically
+  const [qOptions, setQOptions] = useState(['', '', '']);
   const [qScore, setQScore] = useState(1);
   const [qCorrect, setQCorrect] = useState<number[]>([]);
 
+  useEffect(() => {
+    const fetchExam = async () => {
+      try {
+        const res = await axios.get(`/api/employer/exams/${examId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const d = res.data.exam;
+        
+        setBasicInfo({
+          title: d.title || '',
+          totalCandidates: d.totalCandidates?.toString() || '',
+          totalSlots: d.totalSlots?.toString() || '',
+          questionSets: d.questionSets?.toString() || '',
+          questionType: d.questionType || 'multiple_choice',
+          startTime: d.startTime ? format(new Date(d.startTime), "yyyy-MM-dd'T'HH:mm") : '',
+          endTime: d.endTime ? format(new Date(d.endTime), "yyyy-MM-dd'T'HH:mm") : '',
+          duration: d.duration?.toString() || '',
+        });
+
+        const mappedQuestions = (d.questions || []).map((q: any) => ({
+          id: q.id,
+          title: q.title,
+          type: q.type,
+          options: JSON.parse(q.options || '[]'),
+          score: q.score || 1,
+          correctAnswers: JSON.parse(q.correctAnswers || '[]')
+        }));
+        
+        setQuestions(mappedQuestions);
+
+      } catch (err) {
+        toast.error('Failed to load exam details');
+        router.push('/employer/dashboard');
+      } finally {
+        setInitialFetchLoading(false);
+      }
+    };
+    if (examId && token) {
+      fetchExam();
+    }
+  }, [examId, token, router]);
+
   const handleNextStep = () => {
-    // Basic validation
     if (!basicInfo.title || !basicInfo.duration || !basicInfo.startTime || !basicInfo.endTime) {
-      toast.error('Please fill in the required fields.');
+      toast.error('Please fill in or evaluate the required fields.');
       return;
     }
+    setStep(2);
+  };
+
+  const saveBasicInfoEditsAndProceed = () => {
+    setIsEditingBasicInfo(false);
     setStep(2);
   };
 
@@ -113,10 +166,6 @@ export default function CreateTestPage() {
   };
 
   const saveQuestion = () => {
-    if (!qTitle.trim() && qType !== 'text') {
-       // Allow visual saving even if empty for testing but typically block
-    }
-
     const newQuestion: Question = {
       id: editingQuestionId || Math.random().toString(36).substr(2, 9),
       title: qTitle || 'Sample Question',
@@ -144,18 +193,14 @@ export default function CreateTestPage() {
 
     setLoading(true);
     try {
-      const payload = {
-        ...basicInfo,
-        questions,
-      };
-      
-      await axios.post('/api/employer/exams', payload, {
+      const payload = { ...basicInfo, questions };
+      await axios.put(`/api/employer/exams/${examId}`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast.success('Exam created successfully!');
+      toast.success('Exam updated successfully!');
       router.push('/employer/dashboard');
     } catch (err) {
-      toast.error('Failed to create exam.');
+      toast.error('Failed to update exam.');
     } finally {
       setLoading(false);
     }
@@ -183,6 +228,16 @@ export default function CreateTestPage() {
       }
     }
   };
+
+  if (initialFetchLoading) {
+    return (
+      <DashboardLayout role="employer">
+        <div className="flex justify-center items-center py-20 w-full">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout role="employer">
@@ -214,74 +269,48 @@ export default function CreateTestPage() {
           </Button>
         </div>
 
-        {/* Step 1: Basic Info */}
+        {/* Step 1: Basic Info (View Mode defaults) */}
         {step === 1 && (
           <>
-            <div className="bg-white rounded-[12px] border border-slate-200 p-6 lg:p-8 w-full shadow-sm">
-              <h2 className="text-[17px] font-bold text-[#4A4B68] mb-8">Basic Information</h2>
+            <div className="bg-white rounded-[12px] border border-slate-200 p-8 w-full shadow-sm relative">
+              <div className="flex justify-between items-start mb-8">
+                <h2 className="text-[17px] font-bold text-[#4A4B68]">Basic Information</h2>
+                <button 
+                  onClick={() => setIsEditingBasicInfo(true)}
+                  className="flex items-center gap-2 text-[#6633FF] text-[14px] font-semibold hover:underline"
+                >
+                  <Edit2 className="w-4 h-4" /> Edit
+                </button>
+              </div>
+
               <div className="space-y-6">
-                <div className="space-y-2.5">
-                  <Label className="text-[#4A4B68] font-medium text-[14px]">Online Test Title <span className="text-red-500">*</span></Label>
-                  <Input className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] placeholder:text-[#94A3B8]" placeholder="Enter online test title" value={basicInfo.title} onChange={(e) => setBasicInfo({ ...basicInfo, title: e.target.value })} />
+                <div>
+                  <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Online Test Title</div>
+                  <div className="text-[#4A4B68] font-semibold text-[15px]">{basicInfo.title}</div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-                  <div className="space-y-2.5">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Total Candidates <span className="text-red-500">*</span></Label>
-                    <Input type="number" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] placeholder:text-[#94A3B8]" placeholder="Enter total candidates" value={basicInfo.totalCandidates} onChange={(e) => setBasicInfo({ ...basicInfo, totalCandidates: e.target.value })} />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div>
+                    <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Total Candidates</div>
+                    <div className="text-[#4A4B68] font-semibold text-[15px]">{basicInfo.totalCandidates}</div>
                   </div>
-                  <div className="space-y-2.5">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Total Slots <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.totalSlots} onValueChange={(val) => setBasicInfo({ ...basicInfo, totalSlots: val })}>
-                      <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total slots" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1</SelectItem>
-                        <SelectItem value="2">2</SelectItem>
-                        <SelectItem value="3">3</SelectItem>
-                        <SelectItem value="4">4</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div>
+                    <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Total Slots</div>
+                    <div className="text-[#4A4B68] font-semibold text-[15px]">{basicInfo.totalSlots}</div>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
-                  <div className="space-y-2.5">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Total Question Set <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.questionSets} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionSets: val })}>
-                      <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total question set" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1</SelectItem>
-                        <SelectItem value="2">2</SelectItem>
-                        <SelectItem value="3">3</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div>
+                    <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Total Question Set</div>
+                    <div className="text-[#4A4B68] font-semibold text-[15px]">{basicInfo.questionSets}</div>
                   </div>
-                  <div className="space-y-2.5">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Question Type <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.questionType} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionType: val })}>
-                      <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select question type" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
-                        <SelectItem value="descriptive">Descriptive</SelectItem>
-                        <SelectItem value="mixed">Mixed Types</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div>
+                    <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Duration Per Slots (Minutes)</div>
+                    <div className="text-[#4A4B68] font-semibold text-[15px]">{basicInfo.duration}</div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-6">
-                  <div className="space-y-2.5 relative">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Start Time <span className="text-red-500">*</span></Label>
-                    <Input type="datetime-local" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Enter start time" value={basicInfo.startTime} onChange={(e) => setBasicInfo({ ...basicInfo, startTime: e.target.value })} />
-                  </div>
-                  <div className="space-y-2.5 relative">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">End Time <span className="text-red-500">*</span></Label>
-                    <Input type="datetime-local" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Enter end time" value={basicInfo.endTime} onChange={(e) => setBasicInfo({ ...basicInfo, endTime: e.target.value })} />
-                  </div>
-                  <div className="space-y-2.5">
-                    <Label className="text-[#4A4B68] font-medium text-[14px]">Duration</Label>
-                    <Input type="number" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Duration Time" value={basicInfo.duration} onChange={(e) => setBasicInfo({ ...basicInfo, duration: e.target.value })} />
-                  </div>
+                <div>
+                  <div className="text-[#94A3B8] text-[13px] font-medium mb-1">Question Type</div>
+                  <div className="text-[#4A4B68] font-semibold text-[15px] uppercase">{basicInfo.questionType === 'multiple_choice' ? 'MCQ' : basicInfo.questionType}</div>
                 </div>
               </div>
             </div>
@@ -297,7 +326,7 @@ export default function CreateTestPage() {
           </>
         )}
 
-        {/* Step 2: Questions */}
+        {/* Step 2: Questions Set */}
         {step === 2 && (
           <div className="w-full space-y-6 pb-20">
             {questions.map((q, i) => (
@@ -355,6 +384,89 @@ export default function CreateTestPage() {
         )}
       </div>
 
+      {/* Modal for Editing Basic Info */}
+      <Dialog open={isEditingBasicInfo} onOpenChange={setIsEditingBasicInfo}>
+        <DialogContent className="sm:max-w-2xl bg-white p-6 rounded-[16px] border-0 shadow-2xl">
+          <DialogHeader className="border-b border-[#E2E8F0] pb-4 mb-4">
+            <DialogTitle className="text-[17px] font-bold text-[#4A4B68]">Edit Basic Information</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto px-1 py-2">
+            <div className="space-y-2.5">
+              <Label className="text-[#4A4B68] font-medium text-[14px]">Online Test Title <span className="text-red-500">*</span></Label>
+              <Input className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] placeholder:text-[#94A3B8]" placeholder="Enter online test title" value={basicInfo.title} onChange={(e) => setBasicInfo({ ...basicInfo, title: e.target.value })} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+              <div className="space-y-2.5">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">Total Candidates <span className="text-red-500">*</span></Label>
+                <Input type="number" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] placeholder:text-[#94A3B8]" placeholder="Enter total candidates" value={basicInfo.totalCandidates} onChange={(e) => setBasicInfo({ ...basicInfo, totalCandidates: e.target.value })} />
+              </div>
+              <div className="space-y-2.5">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">Total Slots <span className="text-red-500">*</span></Label>
+                <Select value={basicInfo.totalSlots} onValueChange={(val) => setBasicInfo({ ...basicInfo, totalSlots: val })}>
+                  <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total slots" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                    <SelectItem value="4">4</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+              <div className="space-y-2.5">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">Total Question Set <span className="text-red-500">*</span></Label>
+                <Select value={basicInfo.questionSets} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionSets: val })}>
+                  <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total question set" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1</SelectItem>
+                    <SelectItem value="2">2</SelectItem>
+                    <SelectItem value="3">3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2.5">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">Question Type <span className="text-red-500">*</span></Label>
+                <Select value={basicInfo.questionType} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionType: val })}>
+                  <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select question type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
+                    <SelectItem value="descriptive">Descriptive</SelectItem>
+                    <SelectItem value="mixed">Mixed Types</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+              <div className="space-y-2.5 relative">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">Start Time <span className="text-red-500">*</span></Label>
+                <Input type="datetime-local" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Enter start time" value={basicInfo.startTime} onChange={(e) => setBasicInfo({ ...basicInfo, startTime: e.target.value })} />
+              </div>
+              <div className="space-y-2.5 relative">
+                <Label className="text-[#4A4B68] font-medium text-[14px]">End Time <span className="text-red-500">*</span></Label>
+                <Input type="datetime-local" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Enter end time" value={basicInfo.endTime} onChange={(e) => setBasicInfo({ ...basicInfo, endTime: e.target.value })} />
+              </div>
+            </div>
+            
+            <div className="space-y-2.5">
+              <Label className="text-[#4A4B68] font-medium text-[14px]">Duration (Minutes)</Label>
+              <Input type="number" className="h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#4A4B68] placeholder:text-[#94A3B8]" placeholder="Duration Time" value={basicInfo.duration} onChange={(e) => setBasicInfo({ ...basicInfo, duration: e.target.value })} />
+            </div>
+          </div>
+          
+          <DialogFooter className="mt-6 border-t border-[#E2E8F0] pt-4">
+            <Button variant="outline" className="border-[#CBD5E1] text-[#4A4B68] font-semibold" onClick={() => setIsEditingBasicInfo(false)}>Cancel</Button>
+            <Button className="bg-[#6633FF] hover:bg-[#6633FF]/90 text-white font-bold px-6" onClick={saveBasicInfoEditsAndProceed}>Save & Continue</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
+      {/* Modal for Editing Questions (From Step 2) */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-4xl p-0 gap-0 overflow-hidden bg-white rounded-[16px] shadow-2xl border-0">
           
@@ -364,7 +476,7 @@ export default function CreateTestPage() {
               <div className="w-6 h-6 rounded-full border border-[#CBD5E1] flex items-center justify-center text-[12px] font-medium text-[#64748B]">
                 1
               </div>
-              <h2 className="text-[15px] font-bold text-[#1B1C31]">Question 1</h2>
+              <h2 className="text-[15px] font-bold text-[#1B1C31]">Question Edit</h2>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">

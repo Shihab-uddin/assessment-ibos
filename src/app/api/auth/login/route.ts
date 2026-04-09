@@ -5,9 +5,9 @@ import { encrypt } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, role } = await req.json();
+    const { email, password } = await req.json();
 
-    if (!email || !password || !role) {
+    if (!email || !password) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -17,10 +17,6 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
-
-    if (user.role !== role) {
-      return NextResponse.json({ error: 'Invalid role for this user' }, { status: 403 });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
