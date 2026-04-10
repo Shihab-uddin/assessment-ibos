@@ -19,7 +19,7 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
 
   useEffect(() => {
     if (mounted && (!token || user?.role !== role)) {
-      router.push(`/${role}/login`)
+      router.push('/')
     }
   }, [mounted, token, user, role, router])
 
@@ -29,20 +29,19 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
 
   const handleLogout = () => {
     logout()
-    router.push(`/${role}/login`)
+    router.push('/')
   }
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="flex h-16 items-center px-4 md:px-8 border-b bg-white shadow-sm">
-        <div className="flex items-center gap-6">
-          <Image src="/Resource-Logo-1.png" alt="Logo" width={140} height={45} className="object-contain" priority />
-          <span className="text-[15px] font-medium text-[#4A4B68] whitespace-nowrap hidden md:inline-block">{title}</span>
+      <header className="flex h-[80px] items-center px-[80px] border-b bg-white shadow-sm">
+        <div className="flex items-center gap-[100px]">
+          <Image src="/Resource-Logo-1.png" alt="Logo" width={116} height={32} className="object-contain" priority />
+          <span className="text-[16px] font-[500] text-[#4A4B68] whitespace-nowrap hidden md:inline-block">{title}</span>
         </div>
         <div className="ml-auto flex items-center">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 hover:bg-slate-50 py-1.5 px-3 rounded-md outline-none transition-colors border border-transparent hover:border-slate-100">
+            <DropdownMenuTrigger className="flex items-center gap-3 hover:bg-slate-50 py-1.5 px-3 rounded-md outline-none transition-colors border border-transparent hover:border-slate-100 cursor-pointer">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src="" />
                   <AvatarFallback className="bg-slate-100 text-slate-500">
@@ -54,7 +53,6 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
                   <span className="text-[12px] text-[#64748B]">Ref. ID - {user?.id?.substring(0, 8) || '16101121'}</span>
                 </div>
                 <ChevronDown className="w-4 h-4 text-slate-400 ml-1" />
-              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuGroup>
@@ -69,15 +67,15 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
           </DropdownMenu>
         </div>
       </header>
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8">
+      <main className="flex-1 w-full px-[80px] pt-8 pb-12">
         {children}
       </main>
       
       {/* Footer */}
-      <footer className="bg-[#1C1833] text-white py-5 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center text-[13px] md:text-[14px]">
+      <footer className="bg-[#1C1833] text-white min-h-[80px] md:h-[80px] py-4 md:py-0 px-6 md:px-[80px] flex flex-col md:flex-row justify-between items-center text-[16px]">
         <div className="flex items-center gap-3 mb-4 md:mb-0">
-          <span className="text-gray-300 font-medium">Powered by</span>
-          <Image src="/Resource-Logo-1.png" alt="Logo" width={110} height={35} className="brightness-0 invert object-contain" />
+          <span className="text-gray-300 font-medium text-[20px]">Powered by</span>
+          <Image src="/Resource-Logo-1.png" alt="Logo" width={116} height={32} className="brightness-0 invert object-contain" />
         </div>
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center text-gray-200">
           <div className="flex items-center gap-2">

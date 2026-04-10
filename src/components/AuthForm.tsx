@@ -16,6 +16,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 interface AuthFormProps {
   type: 'login' | 'register';
+  role?: string;
   onModeToggle?: () => void;
 }
 
@@ -70,7 +71,7 @@ export function AuthForm({ type, onModeToggle }: AuthFormProps) {
   };
 
   return (
-    <Card className={`w-full max-w-md mx-auto shadow-xl border-none ring-1 ring-slate-100 ${type === 'login' ? 'rounded-[16px] p-2 mt-4' : ''}`}>
+    <Card className={`${type === 'login' ? 'w-full max-w-[571px] min-h-[373px] mx-auto rounded-[16px] shadow-sm border border-[#E2E8F0]' : 'w-full max-w-md mx-auto shadow-xl border-none ring-1 ring-slate-100'}`}>
       {type === 'register' && (
           <CardHeader className="space-y-2 text-center pb-8">
             <CardTitle className="text-3xl font-bold tracking-tight">
@@ -81,8 +82,8 @@ export function AuthForm({ type, onModeToggle }: AuthFormProps) {
             </CardDescription>
           </CardHeader>
       )}
-      <CardContent className={type === 'login' ? 'pt-6 pb-8 px-8' : ''}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <CardContent className={type === 'login' ? 'pt-[32px] pb-[40px] px-[32px]' : ''}>
+        <form onSubmit={handleSubmit(onSubmit)} className={type === 'login' ? 'space-y-[24px]' : 'space-y-4'}>
           {type === 'register' && (
             <>
                 <div className="space-y-2.5 mb-2">
@@ -113,8 +114,8 @@ export function AuthForm({ type, onModeToggle }: AuthFormProps) {
             </>
           )}
           
-          <div className="space-y-1.5">
-            <Label htmlFor="email" className={type === 'login' ? 'text-[13px] font-semibold text-[#475569]' : ''}>{type === 'login' ? 'Email/ User ID' : 'Email'}</Label>
+          <div className={type === 'login' ? 'space-y-[12px]' : 'space-y-1.5'}>
+            <Label htmlFor="email" className={type === 'login' ? 'text-[14px] font-semibold text-[#475569]' : ''}>{type === 'login' ? 'Email/ User ID' : 'Email'}</Label>
             <Input
               id="email"
               type="text"
@@ -125,8 +126,8 @@ export function AuthForm({ type, onModeToggle }: AuthFormProps) {
             {errors.email && <p className="text-sm text-red-500">{errors.email.message as string}</p>}
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="password" className={type === 'login' ? 'text-[13px] font-semibold text-[#475569]' : ''}>Password</Label>
+          <div className={type === 'login' ? 'space-y-[12px]' : 'space-y-1.5'}>
+            <Label htmlFor="password" className={type === 'login' ? 'text-[14px] font-semibold text-[#475569]' : ''}>Password</Label>
             <div className="relative">
                 <Input
                   id="password"
@@ -170,7 +171,7 @@ export function AuthForm({ type, onModeToggle }: AuthFormProps) {
 
           <Button 
             type="submit" 
-            className={type === 'login' ? 'w-full h-[46px] text-[15px] font-bold tracking-wide rounded-[8px] bg-[#6633FF] hover:bg-[#6633FF]/90 mt-4 shadow-sm' : 'w-full h-11 text-base shadow-md'} 
+            className={type === 'login' ? 'w-full text-[16px] py-[12px] px-[32px] font-bold tracking-wide rounded-[8px] bg-[#6633FF] hover:bg-[#6633FF]/90 mt-2 shadow-sm h-auto' : 'w-full h-11 text-base shadow-md'} 
             disabled={loading}
           >
             {loading ? 'Please wait...' : type === 'login' ? 'Sign In' : 'Sign Up'}

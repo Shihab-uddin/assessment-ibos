@@ -15,26 +15,26 @@ export default function EmployerLoginPage() {
       </header>
 
       <main className="flex-1 w-full mx-auto p-4 md:p-8 flex flex-col items-center justify-center">
-        <h1 className="text-[22px] font-bold text-[#4A4B68] mb-8">Sign In</h1>
+        <h1 className="text-[24px] font-bold text-[#4A4B68] mb-8">Sign In</h1>
         <AuthForm type="login" role="employer" />
       </main>
 
       <footer className="mt-auto bg-[#1B1C31] text-white py-4 px-6 flex flex-col md:flex-row items-center justify-between text-[13px]">
-         <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <span className="text-[#94A3B8]">Powered by</span>
-            <Image src="/Resource-Logo-1.png" width={90} height={24} alt="Powered by Logo" className="brightness-0 invert object-contain" />
-         </div>
-         <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-                <span className="text-[#94A3B8]">Helpline</span>
-                <div className="flex items-center gap-1.5 font-medium">
-                    <span>📞</span> +88 011020202505
-                </div>
-            </div>
+        <div className="flex items-center gap-2 mb-4 md:mb-0">
+          <span className="text-[#94A3B8]">Powered by</span>
+          <Image src="/Resource-Logo-1.png" width={90} height={24} alt="Powered by Logo" className="brightness-0 invert object-contain" />
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <span className="text-[#94A3B8]">Helpline</span>
             <div className="flex items-center gap-1.5 font-medium">
-                <span>✉️</span> support@akij.work
+              <span>📞</span> +88 011020202505
             </div>
-         </div>
+          </div>
+          <div className="flex items-center gap-1.5 font-medium">
+            <span>✉️</span> support@akij.work
+          </div>
+        </div>
       </footer>
     </div>
   );

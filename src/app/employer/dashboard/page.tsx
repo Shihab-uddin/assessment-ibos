@@ -34,7 +34,7 @@ export default function EmployerDashboard() {
       } catch (err: any) {
         toast.error('Failed to fetch exams.');
         if (err.response?.status === 401) {
-          router.push('/employer/login');
+          router.push('/');
         }
       } finally {
         setLoading(false);
@@ -47,10 +47,16 @@ export default function EmployerDashboard() {
     <DashboardLayout role="employer">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 pb-2">
         <h1 className="text-[24px] md:text-[28px] font-bold text-[#4A4B68] whitespace-nowrap mr-6">Online Tests</h1>
-        <div className="flex-1 w-full max-w-xl relative mt-4 md:mt-0">
-          <Input placeholder="Search by exam title" className="w-full h-11 rounded-[8px] border-[#CBD5E1] bg-white text-[14px] px-4" />
-          <div className="absolute right-1.5 top-1.5 w-8 h-8 rounded shrink-0 bg-primary/10 flex items-center justify-center pointer-events-none">
-            <Search className="w-4 h-4 text-primary" />
+        <div 
+          className="w-full max-w-[621px] rounded-[8px] p-[1px] relative mt-4 md:mt-0 flex-1 shrink-0"
+          style={{ background: 'linear-gradient(to right, #A086F7, #ECDBFF, #BAA9F2, #B199FF)' }}
+        >
+          <Input 
+            placeholder="Search by exam title" 
+            className="w-full h-[46px] rounded-[7px] border-none bg-white text-[14px] px-4 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[#94A3B8]" 
+          />
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded shrink-0 bg-[#F5F3FF] flex items-center justify-center pointer-events-none">
+            <Search className="w-4 h-4 text-[#6633FF]" />
           </div>
         </div>
         <Button onClick={() => router.push('/employer/create-test')} className="mt-4 md:mt-0 h-11 px-6 rounded-[8px] bg-primary hover:bg-primary/90 text-white font-medium md:ml-6 shrink-0">
@@ -74,28 +80,28 @@ export default function EmployerDashboard() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {exams.map((exam) => (
-              <Card key={exam.id} onClick={() => router.push(`/employer/manage-test/${exam.id}`)} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-6 px-6 pb-6 w-full relative cursor-pointer hover:shadow-md hover:border-primary/30 transition-all duration-200">
-                <div className="text-[17px] font-semibold text-[#1B1C31] mb-3 line-clamp-1">
+              <Card key={exam.id} onClick={() => router.push(`/employer/manage-test/${exam.id}`)} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-[32px] pb-[40px] px-[32px] flex flex-col gap-[24px] w-full relative cursor-pointer hover:shadow-md hover:border-primary/30 transition-all duration-200">
+                <div className="text-[20px] font-bold text-[#1B1C31] line-clamp-1 tracking-tight">
                   {exam.title || 'Psychometric Test for Management Trainee Officer'}
                 </div>
                 
-                <div className="flex flex-wrap items-center justify-between text-[13px] text-[#475569] mb-5 gap-y-3">
+                <div className="flex flex-wrap items-center justify-between text-[14px] text-[#475569]">
                   <div className="flex items-center gap-2">
                     <Image src="/candidate.png" alt="Candidate" width={16} height={16} />
-                    <span>Candidates: {exam.totalCandidates ? exam.totalCandidates.toLocaleString() : 'Not Set'}</span>
+                    <span>Candidates: <span className="font-bold text-[#4A4B68]">{exam.totalCandidates ? exam.totalCandidates.toLocaleString() : 'Not Set'}</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Image src="/set.png" alt="Set" width={16} height={16} />
-                    <span>Question Set: {exam.questionSets ? exam.questionSets : 'Not Set'}</span>
+                    <span>Question Set: <span className="font-bold text-[#4A4B68]">{exam.questionSets ? exam.questionSets : 'Not Set'}</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Image src="/slot.png" alt="Slot" width={16} height={16} />
-                    <span>Exam Slots: {exam.totalSlots ? exam.totalSlots : 'Not Set'}</span>
+                    <span>Exam Slots: <span className="font-bold text-[#4A4B68]">{exam.totalSlots ? exam.totalSlots : 'Not Set'}</span></span>
                   </div>
                 </div>
 
                 <div className="mt-auto">
-                  <Button variant="outline" onClick={(e) => { e.stopPropagation(); }} className="h-9 px-6 rounded-[8px] border-primary text-primary hover:bg-primary/5 hover:text-primary font-medium text-[13px] relative z-10">
+                  <Button variant="outline" onClick={(e) => { e.stopPropagation(); }} className="py-[10px] px-[24px] h-auto rounded-[8px] border-primary text-primary hover:bg-primary/5 hover:text-primary font-bold text-[14px] relative z-10 shadow-sm w-fit">
                     View Candidates
                   </Button>
                 </div>

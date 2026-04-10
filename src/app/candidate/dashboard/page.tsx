@@ -34,7 +34,7 @@ export default function CandidateDashboard() {
       } catch (err: any) {
         toast.error('Failed to fetch assigned exams.');
         if (err.response?.status === 401) {
-          router.push('/candidate/login');
+          router.push('/');
         }
       } finally {
         setLoading(false);
@@ -73,32 +73,30 @@ export default function CandidateDashboard() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {exams.map((exam) => (
-              <Card key={exam.id} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-6 px-6 pb-6 w-full relative flex flex-col justify-between">
-                <div>
-                  <div className="text-[17px] font-semibold text-[#1B1C31] mb-6 line-clamp-1">
-                    {exam.title || 'Psychometric Test for Management Trainee Officer'}
+              <Card key={exam.id} className="shadow-none border border-[#E2E8F0] rounded-[12px] bg-white pt-[32px] pb-[40px] px-[32px] w-full relative flex flex-col gap-[24px]">
+                <div className="text-[20px] font-bold text-[#1B1C31] line-clamp-1 tracking-tight">
+                  {exam.title || 'Psychometric Test for Management Trainee Officer'}
+                </div>
+                
+                <div className="flex flex-wrap items-center justify-between text-[14px] text-[#475569]">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-[18px] h-[18px] text-[#94A3B8]" />
+                    <span>Duration: <span className="font-bold text-[#4A4B68]">{exam.duration} min</span></span>
                   </div>
-                  
-                  <div className="flex flex-wrap items-center justify-between text-[13px] text-[#475569] mb-8 gap-y-3">
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-[18px] h-[18px] text-[#94A3B8]" />
-                      <span>Duration: <span className="text-[#1B1C31] font-semibold">{exam.duration} min</span></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-[18px] h-[18px] text-[#94A3B8]" />
-                      <span>Question: <span className="text-[#1B1C31] font-semibold">{exam._count?.questions || 20}</span></span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <XCircle className="w-[18px] h-[18px] text-[#94A3B8]" />
-                      <span>Negative Marking: <span className="text-[#1B1C31] font-semibold">-0.25/wrong</span></span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-[18px] h-[18px] text-[#94A3B8]" />
+                    <span>Question: <span className="font-bold text-[#4A4B68]">{exam._count?.questions || 20}</span></span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <XCircle className="w-[18px] h-[18px] text-[#94A3B8]" />
+                    <span>Negative Marking: <span className="font-bold text-[#4A4B68]">-0.25/wrong</span></span>
                   </div>
                 </div>
 
                 <div className="mt-auto">
                   <Button 
                     variant="outline" 
-                    className="h-10 w-[140px] rounded-[8px] border-[#6633FF] text-[#6633FF] hover:bg-[#6633FF]/5 hover:text-[#6633FF] font-semibold text-[14px]"
+                    className="py-[10px] px-[24px] h-auto rounded-[8px] border-[#6633FF] text-[#6633FF] hover:bg-[#6633FF]/5 hover:text-[#6633FF] font-bold text-[14px] shadow-sm w-fit"
                     onClick={() => router.push(`/candidate/exam/${exam.id}`)}
                   >
                     Start

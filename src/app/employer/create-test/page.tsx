@@ -185,10 +185,10 @@ export default function CreateTestPage() {
   };
 
   return (
-    <DashboardLayout role="employer">
-      <div className="w-full max-w-[1280px] mx-auto py-2">
+    <DashboardLayout role="employer" title="Online Test">
+      <div className="w-full py-2">
         {/* Banner */}
-        <div className="bg-white rounded-[12px] border border-slate-200 p-5 lg:p-7 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center w-full shadow-sm">
+        <div className="bg-white rounded-[12px] border border-slate-200 py-5 lg:py-7 px-[40px] mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center w-full shadow-sm">
           <div className="flex flex-col gap-5">
             <h1 className="text-[17px] font-bold text-[#4A4B68]">Manage Online Test</h1>
             <div className="flex items-center gap-3 text-sm flex-wrap">
@@ -217,7 +217,7 @@ export default function CreateTestPage() {
         {/* Step 1: Basic Info */}
         {step === 1 && (
           <>
-            <div className="bg-white rounded-[12px] border border-slate-200 p-6 lg:p-8 w-full shadow-sm">
+            <div className="bg-white rounded-[12px] border border-slate-200 py-6 lg:py-8 px-[40px] w-full shadow-sm">
               <h2 className="text-[17px] font-bold text-[#4A4B68] mb-8">Basic Information</h2>
               <div className="space-y-6">
                 <div className="space-y-2.5">
@@ -232,7 +232,7 @@ export default function CreateTestPage() {
                   </div>
                   <div className="space-y-2.5">
                     <Label className="text-[#4A4B68] font-medium text-[14px]">Total Slots <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.totalSlots} onValueChange={(val) => setBasicInfo({ ...basicInfo, totalSlots: val })}>
+                    <Select value={basicInfo.totalSlots} onValueChange={(val) => setBasicInfo({ ...basicInfo, totalSlots: val || '' })}>
                       <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total slots" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="1">1</SelectItem>
@@ -247,7 +247,7 @@ export default function CreateTestPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                   <div className="space-y-2.5">
                     <Label className="text-[#4A4B68] font-medium text-[14px]">Total Question Set <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.questionSets} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionSets: val })}>
+                    <Select value={basicInfo.questionSets} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionSets: val || '' })}>
                       <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select total question set" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="1">1</SelectItem>
@@ -258,7 +258,7 @@ export default function CreateTestPage() {
                   </div>
                   <div className="space-y-2.5">
                     <Label className="text-[#4A4B68] font-medium text-[14px]">Question Type <span className="text-red-500">*</span></Label>
-                    <Select value={basicInfo.questionType} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionType: val })}>
+                    <Select value={basicInfo.questionType} onValueChange={(val) => setBasicInfo({ ...basicInfo, questionType: val || '' })}>
                       <SelectTrigger className="w-full h-[46px] border-[#CBD5E1] rounded-[8px] text-[14px] text-[#94A3B8]"><SelectValue placeholder="Select question type" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
@@ -286,7 +286,7 @@ export default function CreateTestPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-[12px] border border-slate-200 p-5 mt-6 flex justify-between items-center w-full shadow-sm mb-10">
+            <div className="bg-white rounded-[12px] border border-slate-200 py-5 px-[40px] mt-6 flex justify-between items-center w-full shadow-sm mb-10">
               <Button variant="outline" className="h-12 w-32 md:w-40 rounded-[8px] border-[#CBD5E1] text-[#4A4B68] font-bold text-[15px]" onClick={() => router.push('/employer/dashboard')}>
                 Cancel
               </Button>
@@ -301,7 +301,7 @@ export default function CreateTestPage() {
         {step === 2 && (
           <div className="w-full space-y-6 pb-20">
             {questions.map((q, i) => (
-              <div key={q.id} className="bg-white rounded-[12px] border border-slate-200 w-full p-6 lg:p-8 shadow-sm">
+              <div key={q.id} className="bg-white rounded-[12px] border border-slate-200 w-full py-6 lg:py-8 px-[40px] shadow-sm">
                 <div className="flex justify-between items-start mb-6">
                   <h3 className="text-[14px] font-bold text-[#1B1C31]">Question {i + 1}</h3>
                   <div className="flex gap-2 text-[12px]">
@@ -371,7 +371,7 @@ export default function CreateTestPage() {
                 <span className="text-[13px] font-bold text-[#4A4B68]">Score:</span>
                 <Input type="number" min="1" value={qScore} onChange={(e) => setQScore(Number(e.target.value) || 1)} className="w-[50px] h-9 text-center border-[#CBD5E1] rounded-[6px]" />
               </div>
-              <Select value={qType} onValueChange={(val) => setQType(val)}>
+              <Select value={qType} onValueChange={(val) => setQType(val || 'checkbox')}>
                 <SelectTrigger className="w-[125px] h-9 border-[#CBD5E1] rounded-[6px] text-[13px] font-bold text-[#4A4B68]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="radio">Radio</SelectItem>
