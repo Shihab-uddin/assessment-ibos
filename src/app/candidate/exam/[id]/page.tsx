@@ -323,25 +323,25 @@ export default function ExamEngine() {
                 )}
             </div>
 
-            <div className="p-6 md:p-8 border-t border-[#F1F5F9] flex items-center justify-between mt-auto">
+            <div className="px-6 pb-6 md:px-8 md:pb-8 flex flex-col gap-4 mt-2">
+                <Button 
+                    className="w-full h-[54px] rounded-[12px] bg-[#6633FF] hover:bg-[#6633FF]/90 text-white font-semibold text-[15px] shadow-sm transition-all"
+                    onClick={handleNext}
+                >
+                    Submit
+                </Button>
+
                 <Button 
                     variant="outline" 
-                    className="h-11 px-6 rounded-[8px] border-[#E2E8F0] text-[#4A4B68] font-bold text-[14px] hover:bg-slate-50"
+                    className="w-full h-[54px] rounded-[12px] border-[#E2E8F0] text-[#4A4B68] font-semibold text-[15px] hover:bg-slate-50 shadow-sm"
                     onClick={() => {
                         if (currentQuestionIndex < exam.questions.length - 1) {
                             setCurrentQuestionIndex(prev => prev + 1);
                         }
                     }}
-                    disabled={currentQuestionIndex === exam.questions.length - 1} // Hide/Disable if last question, usually better to show but whatever
+                    disabled={currentQuestionIndex === exam.questions.length - 1} 
                 >
                     Skip this Question
-                </Button>
-
-                <Button 
-                    className="h-11 px-8 rounded-[8px] bg-[#6633FF] hover:bg-[#6633FF]/90 text-white font-bold text-[14px] shadow-md transition-all active:scale-95"
-                    onClick={handleNext}
-                >
-                    {currentQuestionIndex === exam.questions.length - 1 ? 'Submit Exam' : 'Save & Continue'}
                 </Button>
             </div>
         </div>

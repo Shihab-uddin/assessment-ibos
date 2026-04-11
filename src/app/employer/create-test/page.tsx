@@ -217,7 +217,7 @@ export default function CreateTestPage() {
         {/* Step 1: Basic Info */}
         {step === 1 && (
           <>
-            <div className="bg-white rounded-[12px] border border-slate-200 py-6 lg:py-8 px-[40px] w-full shadow-sm">
+            <div className="bg-white rounded-[12px] border border-slate-200 p-[24px] mx-[24px] shadow-sm">
               <h2 className="text-[17px] font-bold text-[#4A4B68] mb-8">Basic Information</h2>
               <div className="space-y-6">
                 <div className="space-y-2.5">
@@ -286,7 +286,7 @@ export default function CreateTestPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-[12px] border border-slate-200 py-5 px-[40px] mt-6 flex justify-between items-center w-full shadow-sm mb-10">
+            <div className="bg-white rounded-[12px] border border-slate-200 p-[24px] mx-[24px] mt-6 flex justify-between items-center shadow-sm mb-10">
               <Button variant="outline" className="h-12 w-32 md:w-40 rounded-[8px] border-[#CBD5E1] text-[#4A4B68] font-bold text-[15px]" onClick={() => router.push('/employer/dashboard')}>
                 Cancel
               </Button>
@@ -299,9 +299,9 @@ export default function CreateTestPage() {
 
         {/* Step 2: Questions */}
         {step === 2 && (
-          <div className="w-full space-y-6 pb-20">
+          <div className="w-auto mx-[24px] space-y-6 pb-20">
             {questions.map((q, i) => (
-              <div key={q.id} className="bg-white rounded-[12px] border border-slate-200 w-full py-6 lg:py-8 px-[40px] shadow-sm">
+              <div key={q.id} className="bg-white rounded-[12px] border border-slate-200 p-[24px] shadow-sm">
                 <div className="flex justify-between items-start mb-6">
                   <h3 className="text-[14px] font-bold text-[#1B1C31]">Question {i + 1}</h3>
                   <div className="flex gap-2 text-[12px]">
@@ -336,9 +336,11 @@ export default function CreateTestPage() {
               </div>
             ))}
             
-            <Button className="w-full h-[54px] rounded-[12px] bg-primary hover:bg-primary/90 text-white font-bold text-[15px] shadow-sm" onClick={openAddModal}>
-              Add Question
-            </Button>
+            <div className="bg-white rounded-[12px] border border-slate-200 p-[24px] shadow-sm">
+              <Button className="w-full h-[54px] rounded-[12px] bg-primary hover:bg-primary/90 text-white font-bold text-[15px] shadow-sm" onClick={openAddModal}>
+                Add Question
+              </Button>
+            </div>
             
             {questions.length > 0 && (
               <div className="flex justify-between items-center mt-6 w-full pt-4 pb-10">

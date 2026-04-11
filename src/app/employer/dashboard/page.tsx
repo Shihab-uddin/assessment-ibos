@@ -55,9 +55,7 @@ export default function EmployerDashboard() {
             placeholder="Search by exam title" 
             className="w-full h-[46px] rounded-[7px] border-none bg-white text-[14px] px-4 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-[#94A3B8]" 
           />
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded shrink-0 bg-[#F5F3FF] flex items-center justify-center pointer-events-none">
-            <Search className="w-4 h-4 text-[#6633FF]" />
-          </div>
+          <Image src="/search-icon.png" alt="Search" width={32} height={32} className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none object-contain" />
         </div>
         <Button onClick={() => router.push('/employer/create-test')} className="mt-4 md:mt-0 h-11 px-6 rounded-[8px] bg-primary hover:bg-primary/90 text-white font-medium md:ml-6 shrink-0">
           Create Online Test

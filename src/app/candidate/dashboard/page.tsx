@@ -50,9 +50,7 @@ export default function CandidateDashboard() {
         <div className="flex-1 w-full max-w-xl relative mt-4 md:mt-0 flex justify-end">
           <div className="relative w-full">
             <Input placeholder="Search by exam title" className="w-full h-11 rounded-[8px] border-[#CBD5E1] bg-white text-[14px] px-4" />
-            <div className="absolute right-1.5 top-1.5 w-8 h-8 rounded shrink-0 bg-primary/10 flex items-center justify-center pointer-events-none">
-              <Search className="w-4 h-4 text-primary" />
-            </div>
+            <Image src="/search-icon.png" alt="Search" width={32} height={32} className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none object-contain" />
           </div>
         </div>
       </div>

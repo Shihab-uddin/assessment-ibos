@@ -2,41 +2,6 @@
 # Md Shihab Uddin Sourav
 
 
-## Features implemented ===============================================================================
-- Authentication with jwt token with backend api 
-- Real database implementation with apis (storing exam, questions, attempts, users)
-- Form validation
-- toast notification
-- Online test multi step form
-- Display questions one by one
-- Timer countdown
-- Auto-submit on timeout 
-- Behavioral tracking: tab switch detection, fullscreen exit
-- Pages creations:
- - Common: login page, register page
- - Employer: dashboard, create online test, create questions, exam detail view page, exam edit page for both steps
- - Candidate: dashboard, exam screen page
-=======================================================================================================
-
-
-
-## Tech Stack =========================================================================================
-
-This framework utilizes modern, scalable technologies to ensure high performance and developmental velocities:
-
-- **Framework:** [Next.js 16 (App Router)] + React 19
-- **Typing:** [TypeScript]
-- **Styling:** [Tailwind CSS v4]
-- **UI Components:** [Radix/Base-UI] + shadcn ui
-- **Database / ORM:** [Prisma]
-- **State Management:** [Zustand] for client-side authentication and session handling
-- **Form Handling:** [React Hook Form] + [Zod] for strict schema validation
-- **Authentication:** Edge-compatible JWT sign/verify logic utilizing `jose` 
-- **Data Fetching:** [Axios]
-========================================================================================================
-
-
-
 ## Installation Guide ==================================================================================
 
 Follow these steps to deploy a development server locally. The environment works uniformly across **both Mac and Windows**.
@@ -90,3 +55,60 @@ I used Goolgle's Antigravity with Gemini models for planning and structuring the
 Offline Mode:
 ---------------
 This will be a bit tricky as it might open up some abuseive behavior from the candidates. As I am usign Zustand in this project I can use its state. The fastest answer came into mind that I will persist the answer locally. if user goes offline I will start a grace period, I will log this event and the timer will be running. I will not freeze the  timer as user can misuse this. if the grace period ends during the offline time it will save the answers locally and sync back when the connection restores.
+
+## Live Demo Link ======================================================================================
+
+https://assessment-ibos.vercel.app/
+
+Login credentials:
+- Employer: email: ibos@gmail.com | password: abcd1234
+- candidate: email: shihab@example.com | password: abcd1234
+
+or you can register for both as employer or candidate via Register an Account link on the login page.
+========================================================================================================
+
+
+## Live Video Link ======================================================================================
+
+https://drive.google.com/file/d/15ZLzlodZ89qkY9Ns_vp7Go16-GPHmUGz/view?usp=sharing
+========================================================================================================
+
+
+
+
+
+
+
+
+## Features implemented ===============================================================================
+- Authentication with jwt token with backend api 
+- Real database implementation with apis (storing exam, questions, attempts, users)
+- Form validation
+- toast notification
+- Online test multi step form
+- Display questions one by one
+- Timer countdown
+- Auto-submit on timeout 
+- Behavioral tracking: tab switch detection, fullscreen exit
+- Pages creations:
+ - Common: login page, register page
+ - Employer: dashboard, create online test, create questions, exam detail view page, exam edit page for both steps
+ - Candidate: dashboard, exam screen page
+=======================================================================================================
+
+
+
+## Tech Stack =========================================================================================
+
+This framework utilizes modern, scalable technologies to ensure high performance and developmental velocities:
+
+- **Framework:** [Next.js 16 (App Router)] + React 19
+- **Typing:** [TypeScript]
+- **Styling:** [Tailwind CSS v4]
+- **UI Components:** [Radix/Base-UI] + shadcn ui
+- **Database / ORM:** [Prisma]
+- **State Management:** [Zustand] for client-side authentication and session handling
+- **Form Handling:** [React Hook Form] + [Zod] for strict schema validation
+- **Authentication:** Edge-compatible JWT sign/verify logic utilizing `jose` 
+- **Data Fetching:** [Axios]
+========================================================================================================

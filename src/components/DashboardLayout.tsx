@@ -34,8 +34,8 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="flex h-[80px] items-center px-[80px] border-b bg-white shadow-sm">
-        <div className="flex items-center gap-[100px]">
+      <header className="flex h-[80px] items-center justify-between px-6 md:px-[80px] border-b bg-white shadow-sm">
+        <div className="flex items-center gap-4 md:gap-[100px]">
           <Image src="/Resource-Logo-1.png" alt="Logo" width={116} height={32} className="object-contain" priority />
           <span className="text-[16px] font-[500] text-[#4A4B68] whitespace-nowrap hidden md:inline-block">{title}</span>
         </div>
@@ -67,27 +67,26 @@ export function DashboardLayout({ children, role, title = "Dashboard" }: { child
           </DropdownMenu>
         </div>
       </header>
-      <main className="flex-1 w-full px-[80px] pt-8 pb-12">
+      <main className="flex-1 w-full px-6 md:px-[80px] pt-8 pb-12">
         {children}
       </main>
       
-      {/* Footer */}
-      <footer className="bg-[#1C1833] text-white min-h-[80px] md:h-[80px] py-4 md:py-0 px-6 md:px-[80px] flex flex-col md:flex-row justify-between items-center text-[16px]">
-        <div className="flex items-center gap-3 mb-4 md:mb-0">
-          <span className="text-gray-300 font-medium text-[20px]">Powered by</span>
-          <Image src="/Resource-Logo-1.png" alt="Logo" width={116} height={32} className="brightness-0 invert object-contain" />
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center text-gray-200">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold hidden sm:inline-block">Helpline</span>
-            <Phone className="w-4 h-4 ml-1" />
-            <span>+88 011020202505</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4" />
-            <span>support@akij.work</span>
-          </div>
-        </div>
+      <footer className="mt-auto bg-[#1A152E] text-white min-h-[80px] md:h-[80px] py-8 md:py-0 px-6 md:px-[80px] flex flex-col md:flex-row items-start md:items-center justify-between text-[14px]">
+         <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3 mb-8 md:mb-0">
+            <span className="text-white text-[13px] md:text-[#94A3B8] md:text-[20px]">Powered by</span>
+            <Image src="/Resource-Logo-1.png" width={116} height={32} alt="Powered by Logo" className="brightness-0 invert object-contain w-[100px] md:w-[116px] h-auto" />
+         </div>
+         <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-2">
+                <span className="text-white text-[13px] md:text-[#94A3B8] mb-1 md:mb-0">Helpline</span>
+                <div className="flex items-center gap-2 font-medium">
+                    <Phone className="w-[18px] h-[18px]" /> +88 021051515510
+                </div>
+            </div>
+            <div className="flex items-center gap-2 font-medium">
+                <Mail className="w-[18px] h-[18px]" /> support@akiij.work
+            </div>
+         </div>
       </footer>
     </div>
   )
